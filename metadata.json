@@ -1,0 +1,6 @@
+{
+  "name": "SIGE Angola",
+  "description": "Sistema Integrado de Gestão Escolar (ERP) robusto e moderno para instituições de ensino em Angola, com inteligência artificial jurídica e gestão financeira automática.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
