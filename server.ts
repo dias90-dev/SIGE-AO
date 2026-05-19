@@ -4,7 +4,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 
-async function startServer() {
+export async function createServer() {
   const app = express();
   const PORT = 3000;
 
@@ -90,16 +90,22 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
+    // In Vercel environment or production outside of it
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
+      // Check if file exists, if not serve index.html
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
+  return { app, PORT };
 }
 
-startServer();
+createServer().then(({ app, PORT }) => {
+  if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  }
+});
