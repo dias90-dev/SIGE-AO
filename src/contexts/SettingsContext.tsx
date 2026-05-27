@@ -36,7 +36,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const cached = localStorage.getItem('sige_school_info');
     if (cached) {
       try {
-        setInfo(JSON.parse(cached));
+        const parsed = JSON.parse(cached);
+        setInfo(prev => ({
+          ...defaultInfo,
+          ...parsed
+        }));
       } catch (e) {
         console.error("Failed to parse settings", e);
       }

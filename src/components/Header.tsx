@@ -34,16 +34,18 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange, onToggleSide
         
         <div className="flex items-center gap-3">
           <div className="bg-blue-600 p-1 rounded-lg hidden md:flex items-center justify-center overflow-hidden w-10 h-10">
-            {info.logo ? (
+            {info?.logo ? (
               <img src={info.logo} alt="Logo" className="w-full h-full object-cover" />
             ) : (
               <GraduationCap size={20} className="text-white" />
             )}
           </div>
           <h1 className="font-bold text-lg md:text-xl tracking-wider">
-            {info.name.includes("SIGE") ? (
+            {(info?.name || "SIGE").includes("SIGE") ? (
               <>SIGE <span className="text-blue-500">ANGOLA</span></>
-            ) : info.name}
+            ) : (
+              info?.name || "SIGE ANGOLA"
+            )}
           </h1>
         </div>
 
