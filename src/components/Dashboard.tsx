@@ -15,11 +15,40 @@ interface DashData {
   timestamp: number;
 }
 
+const defaultData: DashData = {
+  stats: [
+    { label: 'Alunos', value: '1.845', change: '+12%', trend: 'up' },
+    { label: 'Professores', value: '78', change: '0%', trend: 'neutral' },
+    { label: 'Receitas Mês', value: '82%', change: '+5%', trend: 'up' },
+    { label: 'Salas Ativas', value: '42', change: '-2', trend: 'down' },
+  ],
+  recentActivity: [
+    { id: 1, title: 'Novo pagamento confirmado', user: 'Manuel D.', time: '12:45' },
+    { id: 2, title: 'Pauta 12ª B publicada', user: 'Prof. Afonso', time: '10:30' },
+    { id: 3, title: 'Circular MED recebida', user: 'Admin', time: '09:15' },
+  ],
+  revenueData: [
+    { name: 'Jan', value: 4000 },
+    { name: 'Fev', value: 3000 },
+    { name: 'Mar', value: 2000 },
+    { name: 'Abr', value: 2780 },
+    { name: 'Mai', value: 1890 },
+  ],
+  gradeDistribution: [
+    { name: '< 10', students: 120 },
+    { name: '10-12', students: 450 },
+    { name: '13-15', students: 300 },
+    { name: '16-18', students: 180 },
+    { name: '19-20', students: 45 },
+  ],
+  timestamp: Date.now()
+};
+
 const CACHE_KEY = 'sige_dashboard_cache';
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 const Dashboard: React.FC = () => {
-  const [data, setData] = useState<DashData | null>(null);
+  const [data, setData] = useState<DashData>(defaultData);
   const [loading, setLoading] = useState(true);
 
   const fetchData = async (force = false) => {
@@ -118,7 +147,7 @@ const Dashboard: React.FC = () => {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        {data?.stats.map((stat, i) => {
+        {(data?.stats || []).map((stat, i) => {
           const Config = statsConfig[i];
           return (
             <motion.div
@@ -167,7 +196,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data?.revenueData}>
+              <AreaChart data={data?.revenueData || []}>
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
@@ -205,7 +234,7 @@ const Dashboard: React.FC = () => {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={data?.gradeDistribution}
+                  data={data?.gradeDistribution || []}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -213,7 +242,7 @@ const Dashboard: React.FC = () => {
                   paddingAngle={5}
                   dataKey="students"
                 >
-                  {data?.gradeDistribution.map((entry, index) => (
+                  {(data?.gradeDistribution || []).map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -222,7 +251,7 @@ const Dashboard: React.FC = () => {
             </ResponsiveContainer>
           </div>
           <div className="mt-4 grid grid-cols-2 gap-2">
-            {data?.gradeDistribution.map((entry, index) => (
+            {(data?.gradeDistribution || []).map((entry, index) => (
               <div key={entry.name} className="flex items-center gap-2">
                 <div className="size-2 rounded-full" style={{ backgroundColor: COLORS[index] }} />
                 <span className="text-[10px] font-bold text-slate-500 uppercase">{entry.name}: {entry.students}</span>
@@ -239,7 +268,7 @@ const Dashboard: React.FC = () => {
             <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full uppercase font-bold tracking-wider">Real-time</span>
           </h3>
           <div className="space-y-4">
-            {data?.recentActivity.map(activity => (
+            {(data?.recentActivity || []).map(activity => (
               <div key={activity.id} className="flex gap-4 items-start pb-4 border-b border-slate-50 last:border-0 last:pb-0 group">
                 <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 text-xs font-bold border border-slate-100 group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
                   {activity.user.charAt(0)}
